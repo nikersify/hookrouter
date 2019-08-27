@@ -330,6 +330,8 @@ const wrapperFunction = (RouteContext, originalResult) => function (){
 	);
 };
 
+const RouteContext = ({children, routerId}) => <ParentContext.Provider value={routerId}>{children}</ParentContext.Provider>;
+
 /**
  * Pass an object to this function where the keys are routes and the values
  * are functions to be executed when a route matches. Whatever your function returns
@@ -388,14 +390,12 @@ export const useRoutes = (routeObj) => {
 	if (!stackObj.passContext) {
 		return result;
 	} else {
-		const RouteContext = ({children}) => <ParentContext.Provider value={routerId}>{children}</ParentContext.Provider>;
-
 		if (typeof result === 'function') {
 			return wrapperFunction(RouteContext, result);
 		}
 
 		return React.isValidElement(result) && result.type !== RouteContext
-			? <RouteContext>{result}</RouteContext>
+			? <RouteContext key={result.key} routerId={routerId}>{result}</RouteContext>
 			: result;
 	}
 };
